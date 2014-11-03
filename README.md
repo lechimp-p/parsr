@@ -78,7 +78,7 @@ bcThenA = symbol("bc a")
 You can use the following syntax in the call to symbol:
 
  syntax   | semantics                                             
-------------------------------------------------------------------
+----------|-------------------------------------------------------
  a b c    | Both match the symbols or tokens a, b and c one after 
  (a b c)  | another.                                              
  a|b|c    | Match one of a, b or c.                               
