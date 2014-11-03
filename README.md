@@ -102,8 +102,8 @@ It is of course easily possible to create a symbol that expands to
 infinity, like:
 
 ```
-a = symbol("\*b")
-b = symbol("\*a")
+a = symbol("*b")
+b = symbol("*a")
 ```
 
 This case is indicated by throwing an InfiniteStateExpansion error.
