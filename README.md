@@ -1,5 +1,6 @@
-A tool for creating parsers for self defined languages.
+# Parsr
 
+*A tool for creating parsers for self defined languages.*
 
 With this module you can define a grammar for a language in a 
 bachus-naur-like form, instantiate parsers from that grammar and 
@@ -8,18 +9,18 @@ parse bits of text according to the grammar.
 To define a grammar create a class deriving from the grammar base 
 class.
 
-::
-
+```
 class myGrammar(grammar):
+```
 
 In the class body you can define tokens by either instantiatiating
 a token directly or using a decorator-version for that instantiated
 token.
 
-::
-
+```
 a = token("a")
 bc = token("[bc]")
+```
 
 A token is the base of any grammar. It is defined by a python
 regexp (which is "a" for token a and "b|c" for token bc). In the
@@ -32,9 +33,9 @@ way.
 The lexer always is in a state, from which you have defined at 
 least one, called lexerStartState
 
-::
-	
+```
 lexerStartState = lexState([ "a", "b"], ["whitespace"])
+```
 
 A lexState is initialised with two lists, one containing the tokens 
 to insert into the stream, and the second containing tokens that 
@@ -54,10 +55,10 @@ find one of the tokens, it raises a LexerError.
 You could use multiple states for the lexing, by defining new 
 lexerStates:
 
-::
-
+```
 commentState = lexState(["commentEnd"], ["commentBody"],
                         pushOn = "commentStart", popOn = "commentEnd")
+```
 
 Like that you could define a state to omit everything between a 
 comment start and end sign. The pushOn argument to lexState defines 
@@ -70,30 +71,22 @@ get to be used.
 
 The tokens can be combined to more complex symbols:
 
-::
-
+```
 bcThenA = symbol("bc a")
+```
 
 You can use the following syntax in the call to symbol:
 
-+----------+-------------------------------------------------------+
-| syntax   | semantics                                             |
-+==========+=======================================================+
-| a b c    | Both match the symbols or tokens a, b and c one after |
-| (a b c)  | another.                                              |
-+----------+-------------------------------------------------------+
-| a|b|c    | Match one of a, b or c.                               |
-+----------+-------------------------------------------------------+
-| ?a       | Match a or not.                                       |
-+----------+-------------------------------------------------------+
-| \*a      | Match any number of appearances of a                  |
-+----------+-------------------------------------------------------+
-| {x,}\*a  | Match at least x appeareances of a.                   |
-+----------+-------------------------------------------------------+
-| {,x}\*a  | Match at most x appeareances of a.                    |
-+----------+-------------------------------------------------------+
-| {x,y}\*a |Match from x to y appeareances of a.                   |
-+----------+-------------------------------------------------------+
+ syntax   | semantics                                             
+------------------------------------------------------------------
+ a b c    | Both match the symbols or tokens a, b and c one after 
+ (a b c)  | another.                                              
+ a|b|c    | Match one of a, b or c.                               
+ ?a       | Match a or not.                                       
+ \*a      | Match any number of appearances of a                  
+ {x,}\*a  | Match at least x appeareances of a.                   
+ {,x}\*a  | Match at most x appeareances of a.                    
+ {x,y}\*a |Match from x to y appeareances of a.                   
 
 Like the tokens in the states of the lexer, the names in the symbols 
 defined	that way will be replaced by the real symbols on instantiation 
@@ -108,10 +101,10 @@ for a new token is reached.
 It is of course easily possible to create a symbol that expands to 
 infinity, like:
 
-::
-
+```
 a = symbol("\*b")
 b = symbol("\*a")
+```
 
 This case is indicated by throwing an InfiniteStateExpansion error.
 
