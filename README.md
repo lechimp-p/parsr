@@ -1,10 +1,52 @@
 # Parsr
 
-*A tool for creating parsers for self defined languages.*
+**A tool for creating parsers for self defined languages.**
 
-With this module you can define a grammar for a language in a 
-bachus-naur-like form, instantiate parsers from that grammar and 
-parse bits of text according to the grammar.
+With this module you can define a grammar for a language, 
+instantiate parsers from that grammar and parse bits of 
+text according to the grammar.
+
+It was build to make it easy to define grammars for a DSL with
+python integration. It is neither fast, nor do i recommend to
+use it in production.
+
+Instead you could use it for a quick and dirty exploration of
+the design space of a language you just thought about. The parsers
+build from your spec run as non deterministic parsers, that is
+they could give you any result that could be parsed according to
+your grammar. In verbose mode, the parsers give you a detailed 
+output of what they are doing. 
+
+The grammars are defined via decorators in a class. There are
+two types of objects involved, tokens and symbols. A token matches
+some strings, a symbol is a more complex structure build from
+other tokens and symbols.
+
+In the first stage of the parsing, the text is broken up into
+distinct pieces (no non-determinism here!) according to the tokens
+in you grammar. In the second stage, the parser tries to group the
+tokens according to the symbols in every possible way.
+
+In your grammar class you can define what happens, if a token or
+symbol is found. You can attach a function to that token/symbol,
+that could process the found string or the results of a subsymbol
+to generate other objects or intermediate data as result.
+
+The parsers (currently ?) do not support fixity (that would make 
+it possible to parse 1 + 1 * 2 as 1 + (1 * 2)), so you might 
+be forced to use parantheses more often than you would like to. 
+You could work around this behaviour by constructing a intermediate
+syntax tree.
+
+**Disclaimer**: As i'm no computer scientist, forgive me if i use
+some terminology inappropriately. I'm also aware, that building
+parsers already is explored for some times and there are well known
+and battle proven algorithms and strategies to implement parsers.
+So this is just my personal naive approach.
+
+## Technical documentation 
+
+A complete example could be found in example.py. 
 
 To define a grammar create a class deriving from the grammar base 
 class.
@@ -78,15 +120,15 @@ bcThenA = symbol("bc a")
 You can use the following syntax in the call to symbol:
 
  syntax   | semantics                                             
-----------|-------------------------------------------------------
- a b c    | Both match the symbols or tokens a, b and c one after 
- (a b c)  | another.                                              
+----------|---------------------------------------------------------
+ a b c    | Match the symbols or tokens a, b and c one after another 
+ (a b c)  | Match the symbols or tokens a, b and c one after another 
  a|b|c    | Match one of a, b or c.                               
  ?a       | Match a or not.                                       
  \*a      | Match any number of appearances of a                  
  {x,}\*a  | Match at least x appeareances of a.                   
  {,x}\*a  | Match at most x appeareances of a.                    
- {x,y}\*a |Match from x to y appeareances of a.                   
+ {x,y}\*a | Match between x and y appeareances of a.                   
 
 Like the tokens in the states of the lexer, the names in the symbols 
 defined	that way will be replaced by the real symbols on instantiation 
@@ -121,7 +163,8 @@ parsed clearly to one interpretation. Using the symbol a|a for example
 would lead to such a grammar, because the parser can't decide which of
 the two options to take. You can get rid of such errors by looking into
 the definition of grammars closely to find the place where the two 
-options arise.
+options arise. You could also catch the exception and inspect on the 
+current state to go get the different possibilities.
 
 By instantiating your grammar with the argument verbose=True, you get
 an output of the parsing process, which might help you to find the
